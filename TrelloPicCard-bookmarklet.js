@@ -1,71 +1,104 @@
 (function(window){
   var $;
+  var appNameSpace = "TrelloPicCard";
 
-  var get_est_jira_time = function() {
-      var jira_time = $('#tt_single_values_orig').text().trim();
-      var hours = jira_time.match(/[+-]?\d+\.\d+/g);
+  /* extend jQuery with a store/restore events */
+  var addJqueryPlugins = function($) {
 
-      if (hours != null && hours.length > 0) {
-          return " (" + hours[0] + ")";
-      } else {
-          return "";
+      function obj_copy(obj) {
+          var out = {};
+          for (i in obj) {
+              if (typeof obj[i] == 'object') {
+                  out[i] = this.copy(obj[i]);
+              }
+              else
+                  out[i] = obj[i];
+          }
+          return out;
       }
+
+        $.fn.extend({
+            storeEvents: function() {
+                this.each(function() {
+                    $.data(this, 'storedEvents', obj_copy($(this).data('events')));
+                });
+                return this;
+            },
+
+            restoreEvents: function() {
+                this.each(function() {
+                    var events = $.data(this, 'storedEvents');
+                    if (events) {
+                        $(this).unbind();
+                        for (var type in events) {
+                            for (var handler in events[type]) {
+                                $.event.add(
+                                    this,
+                                    type,
+                                    events[type][handler],
+                                    events[type][handler].data);
+                            }
+                        }
+                    }
+                });
+                return this;
+            }
+
+        });
+    }
+
+  var enableImageSelection = function () {
+
+      var highlightImage = function () {
+          var $this = $(this);
+          console.log('highlighting', $this);
+
+          $this.data('origCssValues', $this.css(['border-color', 'border-width', 'border-style']));
+
+          $this.css({ 'border-color': "red" });
+          $this.css({ 'border-width': '3px' });
+          $this.css({ 'border-style': 'solid' });
+      }
+
+      var unhighlightImage = function() {
+          var $this = $(this);
+          console.log('UN-highlighting', $this);
+          $this.css($this.data('origCssValues'));
+      }
+
+      $("img").each(function (i, image) {
+          var img = $(image);
+          img.storeEvents();
+          img.unbind();
+          // img.hover(highlightImage, unhighlightImage);
+          img.mouseenter(highlightImage).mouseleave(unhighlightImage)
+          img.on('click', function () {
+              var $this = $(this);
+              addCardForImage($this.attr('src'));
+              $this.restoreEvents();
+          });
+      });
+
+      $()
   }
 
   /* This is run after we've connected to Trello and selected a list */
   var run = function(Trello, idList) {
+        enableImageSelection();
+  }
+
+  var addCardForImage = function (imageUrl) {
+
+      console.log(imageUrl);
+
     var name;
+
     // Default description is the URL of the page we're looking at
     var desc = location.href;
 
-    if(window.goBug) {
-
-      // We're looking at a FogBugz case
-      name = goBug.ixBug + ": " + goBug.sTitle
-
-    } else if ($("#issue_header_summary").length){
-
-      // We're looking at a JIRA case in an older JIRA installation
-      name = $("#key-val").text() + ": " + $("#issue_header_summary").text();
-
-    } else if ($("#jira").length){
-
-      // We're looking at a 5.1+ JIRA case
-      name = $("#key-val").text() + ": " + $("#summary-val").text() +  get_est_jira_time();
-
-    } else if ($("#show_issue").length) {
-
-      // We're looking at a GitHub issue
-      name = $("#show_issue .number strong").text() + " " + $("#show_issue .discussion-topic-title").text();
-
-    } else if ($("#all_commit_comments").length) {
-
-      // We're looking at a GitHub commit
-      name = $(".js-current-repository").text().trim() + ": " + $(".commit .commit-title").text().trim();
-      
-    } else if (jQuery('head meta[content=Redmine]').length) {
-      
-      // We're looking at a redmine issue
-      name = $("#content h2:first").text().trim() + ": " + $("#content h3:first").text().trim();
-
-    } else if ($('#header h1').length) {
-
-        // We're looking at a RequestTracker (RT) ticket
-        name = $('#header h1').text().trim();
-
-    } else if ($('h1 .hP').length){
+    // use page title as card title, taking trello as a "read-later" tool
+    name = $.trim(document.title);
         
-        // we're looking at an email in Gmail
-        name = $('h1 .hP').text().trim();
-    
-    }
-    
-    else {
-        // use page title as card title, taking trello as a "read-later" tool
-        name = $.trim(document.title);
-        
-    }
-
     // Get any selected text
     var selection;
 
@@ -87,11 +120,25 @@
     name = name || 'Unknown page';
 
     // Create the card
-    if(name) {
+    if (name) {
+
+        //POST /1/cards/[card id or shortlink]/attachments
+        //Required permissions: write
+        //Arguments
+        //file (optional)
+        //Valid Values: A file
+        //url (optional)
+        //Valid Values: A URL starting with http:// or https:// or null
+        //    name (optional)
+        //Valid Values: a string with a length from 0 to 256
+        //mimeType (optional)
+        //Valid Values: a string with a length from 0 to 256
+
       Trello.post("lists/" + idList + "/cards", { 
         name: name, 
         desc: desc
-      }, function(card){
+      }, function (card) {
+
         // Display a little notification in the upper-left corner with a link to the card
         // that was just created
         var $cardLink = $("<a>")
@@ -114,8 +161,22 @@
         setTimeout(function(){
           $cardLink.fadeOut(3000);
         }, 5000)
+
+          // Add the imageUrl as the banner 
+        Trello.post("cards/" + card.id + '/attachments', {
+            url: imageUrl
+        }, function(attachment) {
+            console.log(attachment);
+        });
       })
     }
+
+    //PUT /1/cards/[card id or shortlink]/idAttachmentCover
+    //Required permissions: write
+    //Arguments
+    //value (required)
+    //Valid Values: Id of the image attachment of this card to use as its cover, or null for no cover
+
   }
 
   var storage = window.localStorage;
@@ -215,6 +276,7 @@
   // The ids of values we keep in localStorage
   var appKeyName = "trelloAppKey";
   var idListName = "trelloIdList";
+  var idList;
 
   waterfall([
     // Load jQuery
@@ -231,6 +293,7 @@
     // Get the user's App Key, either from local storage, or by prompting them to retrieve it
     function(ev, next) {
       $ = window.jQuery;
+      addJqueryPlugins($);
 
       var appKey = store(appKeyName) || window[appKeyName];
       if(appKey && appKey.length == 32) {
@@ -255,7 +318,8 @@
         error: function(){
           overlayPrompt("You need to authorize Trello", false, function(){
             Trello.authorize({
-              type: "popup",
+                type: "popup",
+                name: "Trello PicCard Bookmarklet",
               expiration: "never",
               scope: { read: true, write: true },
               success: next
@@ -266,14 +330,14 @@
     },
     // Get the list to add cards to, either from local storage or by prompting the user
     function(next) {
-      var idList = store(idListName) || window[idListName];
+      idList = store(idListName) || window[idListName];
       if(idList && idList.length == 24) {
-        next(idList);
+        next();
       } else {
         Trello.get("members/me/boards", { fields: "name" }, function(boards){
           $prompt = overlayPrompt('Which list should cards be sent to?<hr><div class="boards" style="height:500px;overflow-y:scroll"></div>', false, function(){
             idList = $prompt.find("input:checked").attr("id");
-            next(idList);
+            next();
           })
 
           $.each(boards, function(ix, board){
@@ -292,10 +356,10 @@
       }      
     },
     // Store the idList for later
-    function(idList, next) {
+    function(next) {
       if(idList) {
         store(idListName, idList);
-        next(Trello, idList);
+        next();
       }      
     },
     // Run the user portion
