@@ -1,34 +1,26 @@
 ```javascript
-javascript:(function(a){window.trelloAppKey="optional";window.trelloIdList="optional";var b=a.createElement("script");b.src="https://raw.github.com/danlec/Trello-Bookmarklet/master/trello_bookmarklet.js";a.getElementsByTagName("head")[0].appendChild(b)})(document);
+javascript: (function(a) { window.trelloAppKey = "310dbc0365a96f0db3a82c4cb831c62d"; window.trelloIdList = "optional"; var b = a.createElement("script"); b.src = "https://raw.githubusercontent.com/ianrkent/TrelloPicCard/master/TrelloPicCard-bookmarklet.js"; a.getElementsByTagName("head")[0].appendChild(b)})(document);
 ```
 
-This is a <a href="http://en.wikipedia.org/wiki/Bookmarklet">bookmarklet</a> you can use to create a card in <a href="https://trello.com">Trello</a> from ...
+This is a <a href="http://en.wikipedia.org/wiki/Bookmarklet">bookmarklet</a> you can use to create a card in <a href="https://trello.com">Trello</a>, and select  an image on a web page to be the banner of the card.  This could very useful when it would be easier to identify a card from an image - for example if you had a Trello board to manage houses that you might like to visit as part of a house hunt.
 
- - FogBugz cases
- - JIRA issues
- - GitHub issues and commits
- - The selected text from an arbitrary URL
- - ... more?  I'm happy to take pull requests that add support for other websites!
+The first time you run it on a particular site, it will walk you through a simple setup:
 
-The first time you run it on a site, it will walk you through a simple setup:
+ 1. Authorize the site to interact with Trello
+ 2. Select the board/list that you'd like the bookmarklet to add cards too
 
- 1. Input your API Key (which you can get at https://trello.com/1/appKey/generate)
- 2. Authorize the site to interact with Trello
- 3. Select the list that you'd like the bookmarklet to add cards too
-
-You'll only need to go through those steps once per domain; from then on, you should be able to send your
-issues/cases/whatever directly to Trello in a single click.
+You'll only need to go through those steps once per domain;
 
 The card created in Trello will 
 
-- attempt to use the name of the FogBugz/JIRA/GitHub/etc case
 - include a link to the case in the card description
-- (optionally) include any selected text in the description
+- attach the selected image to the card, and set it as the banner
+- (optionally) include any selected text in the description as well
 
 If you modify the unminified bookmarklet, you can re-build it by running the source through a javascript minifier 
 (e.g. the <a href="http://closure-compiler.appspot.com/home">Closure Compiler</a>), 
 and prepending `javascript:` to the front.
 
-If you'd rather not add your appKey and idList for every new domain, you can modify the bookmarklet and include values for `window.trelloAppKey` and `window.trelloIdList` (currently both have the value `"optional"`)
+If you'd rather not have to select your list for every new domain, you can modify the bookmarklet and include the list ID for for `window.trelloIdList` which is currently set to  `"optional"`
 
-**Note:** This basic concept originated with https://github.com/markdrago/cardorizer; this approach doesn't require you to run a server
+**Note:** This basic concept originated with https://github.com/markdrago/cardorizer; It was improved on by https://github.com/danlec/Trello-Bookmarklet to not require you to run a server. This is a fork which instead of enabling capturing of trello cards from issues on various known project managment tools, it allows an image based card to be captured from any page.
