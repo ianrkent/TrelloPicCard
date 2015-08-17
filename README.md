@@ -1,5 +1,5 @@
 ```javascript
-javascript: (function(a) { window.trelloAppKey = "310dbc0365a96f0db3a82c4cb831c62d"; window.trelloIdList = "optional"; var b = a.createElement("script"); b.src = "https://raw.githubusercontent.com/ianrkent/TrelloPicCard/master/TrelloPicCard-bookmarklet.js"; a.getElementsByTagName("head")[0].appendChild(b)})(document);
+javascript: (function(a) { window.trelloAppKey = "optional"; window.trelloIdList = "optional"; var b = a.createElement("script"); b.src = "https://raw.githubusercontent.com/ianrkent/TrelloPicCard/master/TrelloPicCard-bookmarklet.js"; a.getElementsByTagName("head")[0].appendChild(b)})(document);
 ```
 
 This is a <a href="http://en.wikipedia.org/wiki/Bookmarklet">bookmarklet</a> you can use to create a card in <a href="https://trello.com">Trello</a>, and select  an image on a web page to be the banner of the card.  This could very useful when it would be easier to identify a card from an image - for example if you had a Trello board to manage houses that you might like to visit as part of a house hunt.
