@@ -1,0 +1,154 @@
+﻿/*
+ *
+ *   GENERAL
+ *    
+ */
+.trellopic-button {
+    background: -webkit-linear-gradient(top,#61bd4f 0,#5aac44 100%);
+    background: linear-gradient(to bottom,#61bd4f 0,#5aac44 100%);
+    -webkit-box-shadow: 0 1px 0 #4d4d4d;
+    -ms-box-shadow: 0 1px 0 #4d4d4d;
+    box-shadow: 0 1px 0 #4d4d4d;
+    color: #fff;
+    cursor: pointer;
+    font-weight: 700;
+    text-align: center;
+    -ms-border-radius: 3px;
+    border-radius: 3px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+/*
+ *
+ *   CONTROL CENTRE
+ *    
+ */
+
+div.trellopic-control-centre div, 
+div.trellopic-control-centre textarea {
+    font-family: 'Helvetica Neue', Arial, Helvetica, sans-serif;
+    font-size: 17px;
+    color: #E2E4E6;
+    line-height: 21px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+
+/* the container for the control centre */
+div.trellopic-control-centre {
+    position: fixed;
+    border: 1px solid rgb(0, 107, 169);
+    padding: 16px;
+    width: 250px;
+    top: 15px;
+    height: 375px !important;
+    z-index: 100000;
+    background: rgb(0, 121, 191);
+    right: 15px;
+    -ms-border-radius: 5px;
+    border-radius: 5px;
+}
+
+/* the lable for the selected listing */
+div.trellopic-control-centre .trellopic-id-selected-list {
+    background-color: #000000;
+    background-color: rgba(0,0,0,0.25);
+    -ms-border-radius: 2px;
+    border-radius: 2px;
+    border-top: 4px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 4px solid transparent;
+    border-left: 6px solid transparent;
+}
+
+/* the 'create card' button */
+div.trellopic-control-centre .trellopic-id-create-card {
+    position: absolute;
+    bottom: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+/* The image preview */
+div.trellopic-control-centre .trellopic-id-image-preview {
+    border-top: 2px solid rgb(0, 107, 169);
+    padding-top: 10px;
+}
+
+/* the title input box */
+div.trellopic-control-centre .trellopic-id-card-title {
+    font-size: 14px;
+    background-color: #000000;
+    background-color: rgba(0,0,0,0.25);
+    border-radius: 2px;
+    border-top: 4px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 4px solid transparent;
+    border-left: 6px solid transparent;
+    color: white;
+    margin: 0;
+    padding: 0;
+    width: 96%;
+    overflow: hidden;
+    word-wrap: break-word;
+    -moz-resize: none;
+    -ms-resize: none;
+    -o-resize: none;
+    resize: none;
+    height: 75px;
+}
+
+
+/* the close button*/
+div.trellopic-control-centre .trellopic-id-close {
+    position: absolute;
+    top: 370px;
+    right: 112px;
+    left: 150px;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    font-size: 31px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/*
+ *
+ *   POP UP
+ *    
+ */
+/* the container for the popup */
+div.trellopic-popup {
+    border: 1px solid rgb(0, 107, 169);
+    -ms-border-radius: 7px;
+    border-radius: 7px;
+    padding: 16px;
+    background: rgb(0, 121, 191);
+    font-family: 'Helvetica Neue', Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    color: #E2E4E6;
+    line-height: 21px;
+    position: fixed;
+    top: 15px;
+    width: 300px;
+    z-index: 100000;
+}
+
+div.trellopic-popup .trellopic-stretch {
+  position: fixed;
+  top: 29px;
+  right: 0;
+  bottom: 72px;
+  overflow-y: scroll;
+  width: 323px;
+  padding-left: 10px;
+}
+
+div.trellopic-button.trellopic-button-stuckbottom {
+    position: fixed;
+    bottom: 25px;
+    width: 150px;
+}

@@ -1,12 +1,13 @@
 ﻿
 // A fake "prompt" to get info from the user
 TrelloPicCard.overlayPrompt = (function ($) {
+    var html, hasInput, callback, verticalStretch;
+    return function (options) {
 
-    return function(html, hasInput, callback) {
         var done = function(value) {
-            $div.remove();
+            $popupDiv.remove();
             $overlay.remove();
-            callback(value);
+            options.callback(value);
         };
 
         // Cover the existing webpage with an overlay   
@@ -15,7 +16,7 @@ TrelloPicCard.overlayPrompt = (function ($) {
                 background: "#000",
                 opacity: .75,
                 "z-index": 1e4,
-                position: "absolute",
+                position: "fixed",
                 left: 0,
                 top: 0,
                 right: 0,
@@ -27,21 +28,22 @@ TrelloPicCard.overlayPrompt = (function ($) {
             });
 
         // Show a "popup"
-        var $div = $("<div>")
+        var $popupDiv = $("<div class='trellopic-popup'>")
             .css({
-                position: "absolute",
-                border: "1px solid #000",
-                padding: "16px",
-                width: 300,
-                top: 64,
                 left: ($(window).width() - 200) / 2,
-                background: "#fff",
-                "z-index": 1e5
             })
+            .css(options.verticalStretch ? { bottom: "15px" } : { })
             .appendTo("body");
 
-        // Show the prompt
-        $("<div>").html(html).appendTo($div);
+        // Show prompt/content supplied by the caller, and stretch it if necessary
+        var $userContentContainer = $("<div>").html(options.html);
+        if (options.verticalStretch) {
+            $userContentContainer.addClass("trellopic-stretch");
+            $userContentContainer.css({
+                left: ($(window).width() - 200) / 2
+            });
+        }
+        $userContentContainer.appendTo($popupDiv);
 
         // Optionally show an input
         var $input = $("<input>")
@@ -49,26 +51,22 @@ TrelloPicCard.overlayPrompt = (function ($) {
                 width: "100%",
                 "margin-top": "8px"
             })
-            .appendTo($div)
-            .toggle(hasInput);
+            .appendTo($popupDiv)
+            .toggle(options.hasInput);
 
         // Add an "OK" button
         $("<div>")
             .text("OK")
+            .addClass(options.verticalStretch ? "trellopic-button trellopic-button-stuckbottom" : "trellopic-button")
             .css({
-                width: "100%",
-                "text-align": "center",
-                border: "1px solid #000",
-                background: "#eee",
-                "margin-top": "8px",
-                cursor: "pointer"
+                'margin-top': '10px'
             })
-            .appendTo($div)
+            .appendTo($popupDiv)
             .click(function() {
                 done($input.val());
             });
 
-        return $div;
+        return $popupDiv;
     };
 
 })(jQuery);
