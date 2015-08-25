@@ -1,7 +1,7 @@
 ﻿TrelloPicCard.listSelector = (function($) {
 
     return function (callback) {
-        Trello.get("members/me/boards", { fields: "name" }, function (boards) {
+        Trello.get("members/me/boards", { fields: "name", filter: "open" }, function (boards) {
             var currentList = TrelloPicCard.selectedList() | {};
 
             $prompt = TrelloPicCard.overlayPrompt({
