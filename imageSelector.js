@@ -24,38 +24,45 @@ TrelloPicCard.promptImageSelection = (function($) {
 
     var normalisImgSrcUrl = function (url) {
         if (!url) {
-            debugger;
+            return void 0;
         }
 
         if (url.substring(0, 3) === 'url') {
             url = url.substring(4, url.length - 1);  // handle browsers that return url(http://sdfsdf/etc) from the background-image CSS property
         }
+
         var el = document.createElement('a');
         el.href = url;
         var result = el.href;
         return result;
     };
 
-    var getImagesData = function () {
+    var getImagesData = function() {
         var imagesData = [];
 
-        $("img").each(function (i, image) {
+        $("img").each(function(i, image) {
             var img = $(image);
-            var imgProps = new ImageProps(normalisImgSrcUrl(img.attr('src')), img.width(), img.height());
-            imagesData.push(imgProps);
+            var normalisedImageUrl = normalisImgSrcUrl(img.attr('src'));
+            if (normalisedImageUrl) {
+                var imgProps = new ImageProps(normalisedImageUrl, img.width(), img.height());
+                imagesData.push(imgProps);
+            }
         });
 
         // look to add all elements that have a background image, but this is expensive!
         $('div, a, span, p')
-            .filter(function () {
+            .filter(function() {
                 var bgImageUrl = $(this).css('background-image');
                 return bgImageUrl && bgImageUrl !== 'none';
             })
-            .each(function (i, element) {
+            .each(function(i, element) {
                 var $element = $(element);
                 var bgImageUrl = $element.css('background-image');
-                var imgProps = new ImageProps(normalisImgSrcUrl(bgImageUrl), $element.width(), $element.height());
-                imagesData.push(imgProps);
+                var normalisedImageUrl = normalisImgSrcUrl(bgImageUrl);
+                if (normalisedImageUrl) {
+                    var imgProps = new ImageProps(normalisedImageUrl, $element.width(), $element.height());
+                    imagesData.push(imgProps);
+                }
             });
 
         return imagesData;
