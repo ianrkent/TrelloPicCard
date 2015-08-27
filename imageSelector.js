@@ -1,10 +1,35 @@
 ﻿
 TrelloPicCard.promptImageSelection = (function($) {
 
+    var ImageProps = function(url, width, height) {
+        this.url = url;
+        this.width = width;
+        this.height = height;
+    };
+
+    ImageProps.prototype.fitToMax = function(max) {
+        var maxDimension = this.height >= this.width
+            ? { dimType: 'height', dim: this.height }
+            : { dimType: 'width', dim: this.width };
+
+        if (max >= maxDimension.dim)
+            return { width: this.width, height: this.height };
+
+        if (maxDimension.dimType === 'height') {
+            return { width: this.width * max / this.height, height: max };
+        }
+
+        return { width: max, height: this.height * max / this.width };
+    };
+
     var normalisImgSrcUrl = function (url) {
+        if (url.substring(0, 3) === 'url') {
+            url = url.substring(4, url.length - 1);  // handle browsers that return url(http://sdfsdf/etc) from the background-image CSS property
+        }
         var el = document.createElement('a');
         el.href = url;
-        return el.href;
+        var result = el.href;
+        return result;
     };
 
     var getImagesData = function () {
@@ -12,29 +37,20 @@ TrelloPicCard.promptImageSelection = (function($) {
 
         $("img").each(function (i, image) {
             var img = $(image);
+            var imgProps = new ImageProps(normalisImgSrcUrl(img.attr('src')), img.width(), img.height());
+            imagesData.push(imgProps);
+        });
 
-            var imgProps = {
-                url: normalisImgSrcUrl(img.attr('src')),
-                width: img.width(),
-                height: img.height(),
-                fitToMax: function (max) {
-                    var maxDimension = this.height >= this.width
-                        ? { dimType: 'height', dim: this.height }
-                        : { dimType: 'width', dim: this.width };
+        // look to add all elements that have a background image, but this is expensive!
+        var elementsWithBackgroundImages = $('div, a, span, p').filter(function () {
+            var bgImageStyle = $(this).css('background-image');
+            return bgImageStyle !== '' && bgImageStyle !== 'none';
+        });
 
-                    if (max >= maxDimension.dim)
-                        return { width: this.width, height: this.height };
-
-                    if (maxDimension.dimType === 'height') {
-                        return { width: this.width * max / this.height, height: max };
-                    }
-
-                    return { width: max, height: this.height * max / this.width };
-                }
-            };
-
-            // look to add all elements that have a background image, but this is expensive!
-
+        elementsWithBackgroundImages.each(function (i, element) {
+            var $element = $(element);
+            var bgImageUrl = $element.css('background-image');
+            var imgProps = new ImageProps(normalisImgSrcUrl(bgImageUrl), $element.width(), $element.height());
             imagesData.push(imgProps);
         });
 
