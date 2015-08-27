@@ -42,17 +42,17 @@ TrelloPicCard.promptImageSelection = (function($) {
         });
 
         // look to add all elements that have a background image, but this is expensive!
-        var elementsWithBackgroundImages = $('div, a, span, p').filter(function () {
-            var bgImageStyle = $(this).css('background-image');
-            return bgImageStyle !== '' && bgImageStyle !== 'none';
-        });
-
-        elementsWithBackgroundImages.each(function (i, element) {
-            var $element = $(element);
-            var bgImageUrl = $element.css('background-image');
-            var imgProps = new ImageProps(normalisImgSrcUrl(bgImageUrl), $element.width(), $element.height());
-            imagesData.push(imgProps);
-        });
+        $('div, a, span, p')
+            .filter(function () {
+                var bgImageUrl = $(this).css('background-image');
+                return bgImageUrl && bgImageUrl !== 'none';
+            })
+            .each(function (i, element) {
+                var $element = $(element);
+                var bgImageUrl = $element.css('background-image');
+                var imgProps = new ImageProps(normalisImgSrcUrl(bgImageUrl), $element.width(), $element.height());
+                imagesData.push(imgProps);
+            });
 
         return imagesData;
     };
