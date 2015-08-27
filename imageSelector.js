@@ -23,6 +23,10 @@ TrelloPicCard.promptImageSelection = (function($) {
     };
 
     var normalisImgSrcUrl = function (url) {
+        if (!url) {
+            debugger;
+        }
+
         if (url.substring(0, 3) === 'url') {
             url = url.substring(4, url.length - 1);  // handle browsers that return url(http://sdfsdf/etc) from the background-image CSS property
         }
